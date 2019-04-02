@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <style>
+canvas {
+  background-color: #000;
+}
+  </style>
+  <body>
+    <h1>Animation slider</h1>
+    <p><a id="download_1x" href="">Rendering...</a></p>
+    <p><a id="download_2x" href="">Rendering...</a></p>
+    <p><a id="download_3x" href="">Rendering...</a></p>
+    <canvas id="canvas_1x" width="256" height="80"></canvas>
+    <canvas id="canvas_2x" width="512" height="160"></canvas>
+    <canvas id="canvas_3x" width="768" height="240"></canvas>
+    <script>
+function render(scale) {
+  let suffix = parseInt(scale) + "x";
+  let canvas = document.querySelector("#canvas_" + suffix);
+  let ctx = canvas.getContext("2d");
+
+  if (true) {
+    let x = 28;
+    let y = 24;
+
+    ctx.beginPath();
+    ctx.moveTo(x * scale, y * scale);
+    ctx.lineTo(x * scale, (y + 24) * scale);
+    ctx.lineTo((x + 200) * scale, (y + 24) * scale);
+    ctx.lineTo((x + 200) * scale, y * scale);
+    ctx.lineWidth = 2.75 * scale;
+    ctx.strokeStyle = "#ccc";
+    ctx.stroke();
+  }
+  if (true) {
+    for (let i = 0; i < 11; i++) {
+      let x = 28 + 200 * (i / 10);
+      let y = 40;
+
+      ctx.beginPath();
+      ctx.moveTo(x * scale, y * scale);
+      ctx.lineTo(x * scale, (y + 8) * scale);
+      ctx.lineWidth = 2.75 * scale;
+      ctx.strokeStyle = "#aaa";
+      ctx.stroke();
+    }
+  }
+
+  let fileName = "slider_background_" + suffix + ".png";
+  let a = document.querySelector("#download_" + suffix);
+  a.href = canvas.toDataURL("image/png");
+  a.setAttribute("download", fileName);
+  a.innerHTML = "Download " + fileName;
+}
+
+render(1.0);
+render(2.0);
+render(3.0);
+</script>
+  </body>
+</html>

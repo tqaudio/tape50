@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vstgui-ui-description version="1">
+	<fonts>
+		<font bold="true" font-name="Helvetica" name="ProductNameFont" size="24"/>
+	</fonts>
+	<colors>
+		<color name="UnitCColor" rgba="#a3a3a3ff"/>
+	</colors>
+	<template background-color="~ BlackCColor" class="CViewContainer" name="Tape50" size="480, 480" transparent="false">
+		<!-- RATIO SLIDER -->
+		<view background-offset="0, 0" bitmap="slider_background_1x" bitmap-offset="0, 0" class="CSlider" control-tag="Parameters::kRatioId" handle-bitmap="slider_handle_1x" handle-offset="0, 16" mode="free click" mouse-enabled="true" opacity="1" orientation="horizontal" origin="112, 64" reverse-orientation="false" size="256, 80" transparent="false" transparent-handle="false" wheel-inc-value="0.001" zoom-factor="10"/>
+		<view back-color="~ TransparentCColor" class="CTextLabel" font="~ NormalFontVeryBig" font-antialias="true" font-color="~ WhiteCColor" opacity="1" origin="96, 128" size="80, 24" text-alignment="center" title="STOP" transparent="false"/>
+		<view back-color="~ TransparentCColor" class="CTextLabel" font="~ NormalFontVeryBig" font-antialias="true" font-color="~ WhiteCColor" opacity="1" origin="320, 128" size="80, 24" text-alignment="center" title="START" transparent="false"/>
+		<view back-color="~ TransparentCColor" class="CTextEdit" control-tag="Parameters::kRatioId" font="~ NormalFontVeryBig" font-antialias="true" font-color="~ WhiteCColor" opacity="1" origin="200, 160" size="80, 24" text-alignment="center" title="0.00" transparent="true"/>
+		<view back-color="~ TransparentCColor" class="CTextLabel" font="~ NormalFont" font-antialias="true" font-color="~ WhiteCColor" opacity="1" origin="200, 184" size="80, 24" text-alignment="center" title="RATIO" transparent="true"/>
+		<!-- DURATION -->
+		<view back-color="~ TransparentCColor" class="CTextLabel" font="~ NormalFont" font-antialias="true" font-color="~ WhiteCColor" opacity="1" origin="160, 240" size="80, 24" text-alignment="left" title="DURATION" transparent="false"/>
+		<view back-color="~ TransparentCColor" class="CTextEdit" control-tag="Parameters::kDurationId" font="~ NormalFont" font-antialias="true" font-color="~ WhiteCColor" opacity="1" origin="256, 240" size="64, 24" text-alignment="left" title="0.00" transparent="false"/>
+		<view back-color="~ TransparentCColor" class="CTextLabel" font="~ NormalFontSmaller" font-antialias="true" font-color="UnitCColor" opacity="1" origin="320, 240" size="32, 24" text-alignment="left" title="ms" transparent="false"/>
+		<!-- TAPE STOP -->
+		<view back-color="~ TransparentCColor" class="CTextLabel" font="~ NormalFont" font-antialias="true" font-color="~ WhiteCColor" opacity="1" origin="160, 272" size="80, 24" text-alignment="left" title="TAPE STOP" transparent="false"/>
+		<view back-color="~ TransparentCColor" class="CTextLabel" font="~ NormalFont" font-antialias="true" font-color="~ WhiteCColor" opacity="1" origin="256, 272" size="80, 24" text-alignment="left" title="NOTE ON" transparent="false"/>
+		<!-- TAPE START -->
+		<view back-color="~ TransparentCColor" class="CTextLabel" font="~ NormalFont" font-antialias="true" font-color="~ WhiteCColor" opacity="1" origin="160, 304" size="80, 24" text-alignment="left" title="TAPE START" transparent="false"/>
+		<view back-color="~ TransparentCColor" class="CTextLabel" font="~ NormalFont" font-antialias="true" font-color="~ WhiteCColor" opacity="1" origin="256, 304" size="80, 24" text-alignment="left" title="NOTE OFF" transparent="false"/>
+		<!-- CHANNEL -->
+		<view back-color="~ TransparentCColor" class="CTextLabel" font="~ NormalFont" font-antialias="true" font-color="~ WhiteCColor" opacity="1" origin="160, 336" size="80, 24" text-alignment="left" title="CHANNEL" transparent="false"/>
+		<view back-color="~ TransparentCColor" class="CTextEdit" control-tag="Parameters::kNoteChannelId" font="~ NormalFont" font-antialias="true" font-color="~ WhiteCColor" opacity="1" origin="256, 336" size="80, 24" text-alignment="left" title="0.00" transparent="false"/>
+		<!-- NOTE NAME -->
+		<view back-color="~ TransparentCColor" class="CTextLabel" font="~ NormalFont" font-antialias="true" font-color="~ WhiteCColor" opacity="1" origin="160, 368" size="80, 24" text-alignment="left" title="NOTE NAME" transparent="false"/>
+		<view back-color="~ TransparentCColor" class="CTextEdit" control-tag="Parameters::kNoteNumberId" font="~ NormalFont" font-antialias="true" font-color="~ WhiteCColor" opacity="1" origin="256, 368" size="80, 24" text-alignment="left" title="0.00" transparent="false"/>
+		<!-- PRODUCT NAME -->
+		<view back-color="~ TransparentCColor" class="CTextLabel" font="ProductNameFont" font-antialias="true" font-color="~ WhiteCColor" opacity="1" origin="0, 424" size="480, 24" text-alignment="center" title="Tape50" transparent="false"/>
+	</template>
+	<custom>
+	</custom>
+	<bitmaps>
+		<bitmap name="slider_background_1x" path="slider_background_1x.png"/>
+		<bitmap name="slider_background_2x" path="slider_background_2x.png"/>
+		<bitmap name="slider_background_3x" path="slider_background_3x.png"/>
+		<bitmap name="slider_handle_1x" path="slider_handle_1x.png"/>
+		<bitmap name="slider_handle_2x" path="slider_handle_2x.png"/>
+		<bitmap name="slider_handle_3x" path="slider_handle_3x.png"/>
+	</bitmaps>
+	<control-tags>
+		<control-tag name="Bypass" tag="100"/>
+		<control-tag name="Parameters::kRatioId" tag="101"/>
+		<control-tag name="Parameters::kDurationId" tag="102"/>
+		<control-tag name="Parameters::kNoteChannelId" tag="103"/>
+		<control-tag name="Parameters::kNoteNumberId" tag="104"/>
+	</control-tags>
+</vstgui-ui-description>
