@@ -1,12 +1,7 @@
 #include "../include/processor.h"
 
 namespace Tape50 {
-Processor::Processor()
-    : mRatio(DEFAULT_RATIO_NORMALIZED), mDuration(DEFAULT_DURATION_NORMALIZED),
-      mBypass(false), mNoteChannel(DEFAULT_MIDI_CHANNEL_NORMALIZED),
-      mNoteNumber(DEFAULT_MIDI_NOTE_NORMALIZED) {
-  setControllerClass(ControllerID);
-}
+Processor::Processor() { setControllerClass(ControllerID); }
 
 tresult PLUGIN_API Processor::initialize(FUnknown *context) {
   tresult result = AudioEffect::initialize(context);
@@ -50,23 +45,28 @@ tresult PLUGIN_API Processor::setActive(TBool state) {
     return kResultFalse;
   }
   if (state) {
-    for (int channel = 0; channel < channelCount; channel++) {
-      mBuffer[channel] = new Buffer(processSetup.sampleRate, MAX_DURATION);
-      mBuffer[channel]->setRatio(1.0f - mRatio);
-      mBuffer[channel]->setDuration(mDuration * MAX_DURATION);
-    }
+    mBuffer = new Buffer *[channelCount];
     mNoteOns = new AutomationParameter[processSetup.maxSamplesPerBlock];
     mNoteOffs = new AutomationParameter[processSetup.maxSamplesPerBlock];
     mRatios = new AutomationParameter[processSetup.maxSamplesPerBlock];
     mDurations = new AutomationParameter[processSetup.maxSamplesPerBlock];
+
+    for (int channel = 0; channel < channelCount; channel++) {
+      mBuffer[channel] =
+          new Buffer(processSetup.sampleRate, Constants::maxDuration);
+      mBuffer[channel]->setRatio(1.0 - mRatio);
+      mBuffer[channel]->setDuration(mDuration * Constants::maxDuration);
+    }
   } else {
     for (int channel = 0; channel < channelCount; channel++) {
       delete mBuffer[channel];
     }
-    delete mNoteOns;
-    delete mNoteOffs;
-    delete mRatios;
-    delete mDurations;
+
+    delete[] mNoteOns;
+    delete[] mNoteOffs;
+    delete[] mRatios;
+    delete[] mDurations;
+    delete mBuffer;
   }
 
   return AudioEffect::setActive(state);
@@ -100,7 +100,7 @@ tresult PLUGIN_API Processor::process(ProcessData &data) {
       }
       switch (paramQueue->getParameterId()) {
       case Parameters::kBypassId:
-        mBypass = (value > 0.5f);
+        mBypass = (value > 0.5);
         break;
       case Parameters::kRatioId:
         mRatio = value;
@@ -111,12 +111,6 @@ tresult PLUGIN_API Processor::process(ProcessData &data) {
         mDuration = value;
         mDurations[sampleOffset].value = value;
         mDurations[sampleOffset].hasChanged = true;
-        break;
-      case Parameters::kNoteChannelId:
-        mNoteChannel = value;
-        break;
-      case Parameters::kNoteNumberId:
-        mNoteNumber = value;
         break;
       }
     }
@@ -133,8 +127,6 @@ tresult PLUGIN_API Processor::process(ProcessData &data) {
       }
 
       int sampleOffset = incomingEvent.sampleOffset;
-      int noteNumber = round(mNoteNumber * 128.0f);
-      int noteChannel = round(mNoteChannel * 16.0f);
 
       if (sampleOffset < 0) {
         sampleOffset = 0;
@@ -144,21 +136,9 @@ tresult PLUGIN_API Processor::process(ProcessData &data) {
       }
       switch (incomingEvent.type) {
       case Event::kNoteOnEvent:
-        if (noteNumber <= 127 && noteNumber != incomingEvent.noteOn.pitch ||
-            noteChannel > 0 &&
-                (noteChannel - 1) != incomingEvent.noteOn.channel) {
-          break;
-        }
-
         mNoteOns[sampleOffset].hasChanged = true;
         break;
       case Event::kNoteOffEvent:
-        if (noteNumber <= 127 && noteNumber != incomingEvent.noteOn.pitch ||
-            noteChannel > 0 &&
-                (noteChannel - 1) != incomingEvent.noteOn.channel) {
-          break;
-        }
-
         mNoteOffs[sampleOffset].hasChanged = true;
         break;
       }
@@ -192,14 +172,14 @@ tresult PLUGIN_API Processor::process(ProcessData &data) {
           }
         }
         if (mRatios[sample].hasChanged) {
-          mBuffer[channel]->setRatio(1.0f - mRatios[sample].value);
+          mBuffer[channel]->setRatio(1.0 - mRatios[sample].value);
           if (channel == channelCount - 1) {
             mRatios[sample].hasChanged = false;
           }
         }
         if (mDurations[sample].hasChanged) {
           mBuffer[channel]->setDuration(mDurations[sample].value *
-                                        MAX_DURATION);
+                                        Constants::maxDuration);
           if (channel == channelCount - 1) {
             mDurations[sample].hasChanged = false;
           }
@@ -220,11 +200,9 @@ tresult PLUGIN_API Processor::setState(IBStream *state) {
   }
 
   IBStreamer streamer(state, kLittleEndian);
-  int32 savedBypass = 0;
-  float savedRatio = 0.0f;
-  float savedDuration = 0.0f;
-  float savedNoteChannel = 0.0f;
-  float savedNoteNumber = 0.0f;
+  int32 savedBypass{0};
+  float savedRatio{0.0};
+  float savedDuration{0.0};
 
   if (!streamer.readInt32(savedBypass)) {
     return kResultFalse;
@@ -235,18 +213,10 @@ tresult PLUGIN_API Processor::setState(IBStream *state) {
   if (!streamer.readFloat(savedDuration)) {
     return kResultFalse;
   }
-  if (!streamer.readFloat(savedNoteChannel)) {
-    return kResultFalse;
-  }
-  if (!streamer.readFloat(savedNoteNumber)) {
-    return kResultFalse;
-  }
 
   mBypass = savedBypass > 0;
   mRatio = savedRatio;
   mDuration = savedDuration;
-  mNoteChannel = savedNoteChannel;
-  mNoteNumber = savedNoteNumber;
 
   return kResultOk;
 }
@@ -255,16 +225,12 @@ tresult PLUGIN_API Processor::getState(IBStream *state) {
   int32 saveBypass = mBypass ? 1 : 0;
   float saveRatio = mRatio;
   float saveDuration = mDuration;
-  float saveNoteChannel = mNoteChannel;
-  float saveNoteNumber = mNoteNumber;
 
   IBStreamer streamer(state, kLittleEndian);
 
   streamer.writeInt32(saveBypass);
   streamer.writeFloat(saveRatio);
   streamer.writeFloat(saveDuration);
-  streamer.writeFloat(saveNoteChannel);
-  streamer.writeFloat(saveNoteNumber);
 
   return kResultOk;
 }

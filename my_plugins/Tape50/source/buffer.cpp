@@ -1,12 +1,11 @@
+#include <math.h>
+
 #include "../include/buffer.h"
 
 namespace Tape50 {
-Buffer::Buffer(int sampleRate, double capacity /* ms */)
-    : mSampleRate(sampleRate), mCapacity(sampleRate * capacity / 1000.0f),
-      mReadHead(0.0f), mWriteHead(0), mTapeStopTriggered(false),
-      mTapeStartTriggered(false), mRatio(0.0f), mMiddlePoint(0) {
-  mBuffer = new double[mCapacity];
-}
+Buffer::Buffer(int sampleRate, double maxDuration /* ms */)
+    : mSampleRate(sampleRate), mCapacity(sampleRate * maxDuration / 1000.0),
+      mBuffer(new double[mCapacity]) {}
 
 Buffer::~Buffer() { delete[] mBuffer; }
 
@@ -15,7 +14,7 @@ double Buffer::read() {
     return mBuffer[0];
   }
   if (!mTapeStartTriggered && mWriteHead > mMiddlePoint - 1) {
-    return 0.0f;
+    return 0.0;
   }
 
   int index = floor(mReadHead);
@@ -23,10 +22,10 @@ double Buffer::read() {
   double result =
       mBuffer[index] + ratio * (mBuffer[index + 1] - mBuffer[index]);
 
-  double diff = 0.0f;
+  double diff{0.0};
 
   if (mWriteHead < mMiddlePoint) {
-    diff = 1.0f - (double)mWriteHead / (double)mMiddlePoint;
+    diff = 1.0 - (double)mWriteHead / (double)mMiddlePoint;
   } else {
     diff =
         (double)(mWriteHead - mMiddlePoint) / (double)(mLength - mMiddlePoint);
@@ -34,15 +33,15 @@ double Buffer::read() {
 
   mReadHead += diff;
 
-  double wetGain = 1.0f - pow(1.0f - diff, 9.42f);
+  double wetGain = 1.0 - pow(1.0f - diff, 9.42);
   double wetFadeOut = 1.0f;
   double dryFadeIn = 0.0f;
 
   if (mWriteHead > mMiddlePoint) {
-    wetFadeOut = 1.0f - pow((double)mWriteHead / (double)mLength, 9.42f);
+    wetFadeOut = 1.0f - pow((double)mWriteHead / (double)mLength, 9.42);
     dryFadeIn = pow((double)(mWriteHead - mMiddlePoint) /
                         (double)(mLength - mMiddlePoint),
-                    9.42f);
+                    9.42);
   }
 
   return result * wetGain * wetFadeOut + mBuffer[mWriteHead - 1] * dryFadeIn;
@@ -64,7 +63,7 @@ void Buffer::write(double value) {
     }
     mTapeStopTriggered = false;
     mTapeStartTriggered = false;
-    mReadHead = 0.0f;
+    mReadHead = 0.0;
     mWriteHead = 0;
   }
 }
@@ -78,11 +77,11 @@ void Buffer::tapeStart() {
 }
 
 void Buffer::setRatio(double ratio) {
-  if (ratio > 1.0f) {
-    ratio = 1.0f;
+  if (ratio > 1.0) {
+    ratio = 1.0;
   }
-  if (ratio < 0.0f) {
-    ratio = 0.0f;
+  if (ratio < 0.0) {
+    ratio = 0.0;
   }
 
   mRatio = ratio;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "buffer.h"
+#include "constants.h"
 #include "id.h"
 #include "parameter.h"
 
@@ -34,18 +35,16 @@ public:
   tresult PLUGIN_API setState(IBStream *state) SMTG_OVERRIDE;
   tresult PLUGIN_API getState(IBStream *state) SMTG_OVERRIDE;
 
-protected:
-  Buffer *mBuffer[2];
+private:
+  AutomationParameter *mRatios = nullptr;
+  AutomationParameter *mDurations = nullptr;
+  AutomationParameter *mNoteOns = nullptr;
+  AutomationParameter *mNoteOffs = nullptr;
 
-  AutomationParameter *mNoteOns;
-  AutomationParameter *mNoteOffs;
-  AutomationParameter *mRatios;
-  AutomationParameter *mDurations;
+  bool mBypass = false;
+  ParamValue mRatio = Constants::defaultRatioNormalized;
+  ParamValue mDuration = Constants::defaultDurationNormalized;
 
-  bool mBypass;
-  ParamValue mRatio;
-  ParamValue mDuration;
-  ParamValue mNoteChannel;
-  ParamValue mNoteNumber;
+  Buffer **mBuffer = nullptr;
 };
 } // namespace Tape50

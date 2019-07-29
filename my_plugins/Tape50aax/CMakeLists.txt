@@ -7,19 +7,18 @@ if(SMTG_AAX_SDK_PATH AND SMTG_ADD_VSTGUI)
   set(
     Tape50_aax_sources
     source/aax.cpp
-    ../Tape50/include/version.h
-    ../Tape50/include/processor.h
-    ../Tape50/include/parameter.h
-    ../Tape50/include/id.h
-    ../Tape50/include/constants.go
-    ../Tape50/include/controller.h
-    ../Tape50/include/constants.h
     ../Tape50/include/buffer.h
-    ../Tape50/source/parameter.cpp
-    ../Tape50/source/processor.cpp
+    ../Tape50/include/constants.h
+    ../Tape50/include/controller.h
+    ../Tape50/include/id.h
+    ../Tape50/include/parameter.h
+    ../Tape50/include/processor.h
+    ../Tape50/include/version.h
     ../Tape50/source/buffer.cpp
     ../Tape50/source/controller.cpp
     ../Tape50/source/factory.cpp
+    ../Tape50/source/parameter.cpp
+    ../Tape50/source/processor.cpp
   )
   set(Tape50_sources ${Tape50_aax_sources} ${base_sources})
   set(target Tape50aax)

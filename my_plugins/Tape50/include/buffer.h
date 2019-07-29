@@ -1,11 +1,9 @@
 #pragma once
 
-#include <math.h>
-
 namespace Tape50 {
 class Buffer {
 public:
-  Buffer(int sampleRate, double capacity /* ms */);
+  Buffer(int sampleRate, double maxDuration /* ms */);
   ~Buffer();
 
   double read();
@@ -17,19 +15,19 @@ public:
   void setRatio(double ratio);
   void setDuration(double duration);
 
-protected:
-  int mSampleRate;
-  int mCapacity;
-  int mLength;
-  double mReadHead;
-  int mWriteHead;
+private:
+  int mSampleRate; // e.g. 44100 (Hz)
+  int mCapacity;   // e.g. 441000 (samples)
+  int mLength = 0;
+  double mReadHead = 0.0;
+  int mWriteHead = 0;
 
-  int mMiddlePoint;
-  double mRatio;
+  int mMiddlePoint = 0;
+  double mRatio = 0.0;
 
-  bool mTapeStopTriggered;
-  bool mTapeStartTriggered;
+  bool mTapeStopTriggered = false;
+  bool mTapeStartTriggered = false;
 
-  double *mBuffer;
+  double *mBuffer = nullptr;
 };
 } // namespace Tape50
